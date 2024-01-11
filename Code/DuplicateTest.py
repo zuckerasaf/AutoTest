@@ -2,11 +2,11 @@ import os
 import shutil
 import time
 from tkinter import messagebox
-
+import pygetwindow as gw
 import tkinter as tk
 from tkinter import simpledialog
 import Global_Setting_Var
-from Util import *
+import Util
 import DataWindow
 
 def replace_string_in_file(file_path, old_string, new_string):
@@ -100,7 +100,7 @@ def getNewtestName(source_folder):
         text = selected.replace("_Desktop","")
     else:
         text=selected
-    RandScenrioName = text + "_" + CreateRandTestName(Global_Setting_Var.RSN).replace(":", "")
+    RandScenrioName = text + "_" + Util.CreateRandTestName(Global_Setting_Var.RSN).replace(":", "")
     NewName = open_input_window(RandScenrioName)
 
     # add the environment suffix to  the name (IOS web, Desktop, none)
@@ -128,19 +128,25 @@ def getNewtestName(source_folder):
     #
     duplicate_folder(source_folder, destination_folder)
 
-    changeFilesName(destination_folder,selected,NewName)
+    changeFilesName(destination_folder, selected, NewName)
 
     ATPfile = destination_folder + "/" + NewName +"_ATP.txt"
 
-    replace_string_in_file(ATPfile,selected,NewName)
+    replace_string_in_file(ATPfile, selected, NewName)
 
-    Data_win1 = gw.getWindowsWithTitle('Auto Test start up')[0]
-    Data_win1.close()
+    Data_win1 = gw.getWindowsWithTitle('Auto Test start up')
 
-    runMainAutoScript()
+    if Data_win1:
+        # Pause for 2 seconds (you might want to adjust this delay as needed)
+        time.sleep(2)
 
-    #
-    #
-    # messagebox.showinfo('Auto Test', f"Folder '{selected}' successfully duplicated to '{NewName}'.")
-    #
+        # Close the first window with the specified title
+        Data_win1[0].close()
+    else:
+        print("No window with title 'Auto Test start up' found.")
+
+
+    Util.runMainAutoScript()
+
+
 

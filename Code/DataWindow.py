@@ -474,12 +474,14 @@ def startupprocedure():
 
         # Get the raw data of the entire line
         raw_line_data = text_widget.get(line_start, line_end)
-        stepname = raw_line_data.split(' ')[-1]
-        DIffimage_path = (Global_Setting_Var.ParentDirResu + stepname[:-12] + "/" + stepname[:-5]+"P_N_Diff.jpg")
-        Cutimage_path = (Global_Setting_Var.ParentDirResu + stepname[:-12] + "/" + stepname[:-5] + "P_Cut.jpg")
-        concatenate_path = (Global_Setting_Var.ParentDirResu + stepname[:-12] + "/" + "concatenate.jpg")
+        stepname = raw_line_data.split(' ')
+        folderName = stepname[0][1:]
+        fileName = stepname[9][1:-4]
+        Diffimage_path = (Global_Setting_Var.ParentDirResu + folderName + "/" + fileName+"_N_Diff.jpg")
+        Cutimage_path = (Global_Setting_Var.ParentDirResu + folderName + "/" + fileName+ "_Cut.jpg")
+        concatenate_path = (Global_Setting_Var.ParentDirResu + folderName + "/" + "concatenate.jpg")
 
-        ImageProcess.concatenate_images_vertically(DIffimage_path,Cutimage_path,concatenate_path)
+        ImageProcess.concatenate_images_vertically(Diffimage_path,Cutimage_path,concatenate_path)
 
         # Use the default associated program to open the file
         try:

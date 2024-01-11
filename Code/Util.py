@@ -303,9 +303,16 @@ def killProcess():
 # output: none
 def close_Notefic():
    if Global_Setting_Var.stop_flag == False:
-       Notif_win1 = gw.getWindowsWithTitle('AutoTestNotification')[0]
-       time.sleep(2)
-       Notif_win1.close()
+       Notif_win1 = gw.getWindowsWithTitle('AutoTestNotification')
+       # Check if the list is not empty
+       if Notif_win1:
+           # Pause for 2 seconds (you might want to adjust this delay as needed)
+           time.sleep(2)
+
+           # Close the first window with the specified title
+           Notif_win1[0].close()
+       else:
+           print("No window with title 'AutoTestNotification' found.")
 
 
 

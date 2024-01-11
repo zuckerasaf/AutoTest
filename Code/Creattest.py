@@ -326,7 +326,7 @@ def main_c():
         check_name_exists(Global_Setting_Var.ParentDirTest, test_name,
                           1)  # check if the test directory is already existing, popup message if it is
 
-        RandScenrioName = CreateRandTestName(Global_Setting_Var.Notifile)
+        RandScenrioName = Util.CreateRandTestName(Global_Setting_Var.Notifile)
 
         # Create the test directory
         path = os.path.join(Global_Setting_Var.ParentDirTest, test_name)

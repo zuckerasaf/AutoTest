@@ -4,41 +4,40 @@ Created on Sun Jan 16 16:02:02 2022
 
 @author: AZucker
 """
-import pyautogui
-import time
+# import pyautogui
+# import time
 import PIL.Image
 import PIL.ImageChops
 import PIL.ImageOps
-import ctypes
-import sys
+# import ctypes
+# import sys
 from datetime import datetime
 import ChromeIssue
-import ImageProcess
-#from Code import MainAutoTest
-import MainAutoTest
+# import ImageProcess
+# #from Code import MainAutoTest
+# import MainAutoTest
 from Util import *
 from DataWindow import *
 from ChromeIssue import *
 from pynput.keyboard import Listener as KeyboardListener
-from pynput.mouse import Listener as MouseListener
-from pynput.keyboard import Key
+# from pynput.mouse import Listener as MouseListener
+# from pynput.keyboard import Key
 from Listener import *
-import Listener
+# import Listener
 import threading
-from selenium import webdriver
+# from selenium import webdriver
 import Global_Setting_Var
+
 pyautogui.FAILSAFE = False
 
 
-
-
-
 ############# function for this Script ###########
-def update_data(TestResualt,OverAllResault,test_name,fileNameImage_number,status,diff_scale, diff) :
+def update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale, diff):
     TestResualt.writelines(test_name + "_step_" + str(fileNameImage_number) + status + " The difference scale =" + str(
         diff_scale) + " " + Util.Timefordispaly() + "\n")  # update test analasys file
     OverAllResault.writelines(
-        test_name + "_step_ " + str(fileNameImage_number) + status + " define difference " + str(diff) +" The difference scale = " + str(
+        test_name + "_step_ " + str(fileNameImage_number) + status + " define difference " + str(
+            diff) + " The difference scale = " + str(
             diff_scale) + " " + Util.Timefordispaly() + "\n")  # update general result file
 
 
@@ -57,7 +56,7 @@ def Update_ATR(ATRfile, ATPfile, status, difference, FileNameSourc, ATPLine):
 
     for line in ATPLine:
         Filenameclean = str(FileNameSource.split("/")[-1:])[2:-6]
-        #print(line)
+        # print(line)
         if Filenameclean in line:
             ATRfile.writelines(line[:-1] + "\t difference " + str(difference) + "\t status " + status + "\n")
 
@@ -74,7 +73,8 @@ def Create_Def_Image(FileNameSource, FileNameNew, number):
     DifffileNameImage = fileNameImage + "_step_" + number + "N_Diff.jpg"
     diff.save(DifffileNameImage)
 
-def calcdiffrance(FileNameNew,FileNameSource,path,scale):
+
+def calcdiffrance(FileNameNew, FileNameSource, path, scale):
     diff = 0
 
     img_a_pixels_open = PIL.Image.open(FileNameSource)
@@ -98,16 +98,18 @@ def calcdiffrance(FileNameNew,FileNameSource,path,scale):
 
     return diff
 
+
 # write the mouse position and click  to log
 # the function is in "Listener.py" file
 # output: none
 def mouse_click(x, y, button, pressed):
     Listener_mouse_click(x, y, button, pressed, Global_Setting_Var.start_time, ATRLogfilePointer)
 
+
 # write the mouse scroll to log
 # the function is in "Listener.py" file
 def mouse_scroll(x, y, dx, dy):
-    Listener_mouse_scroll(x, y, dx, dy,Global_Setting_Var.start_time, ATRLogfilePointer)
+    Listener_mouse_scroll(x, y, dx, dy, Global_Setting_Var.start_time, ATRLogfilePointer)
 
 
 # write the keybord press to log
@@ -128,7 +130,7 @@ def keyboard_press(key):
 #                 return 1
 #     return 0
 
- ############# the script code start here  ###########
+############# the script code start here  ###########
 def main_r():
     global TestLog
     global FileNameSource
@@ -142,8 +144,7 @@ def main_r():
     global ATRLogfilePointer
     global total_time
 
-
-    #TestLog = pointer to the file that contain the desire tests list
+    # TestLog = pointer to the file that contain the desire tests list
     TestLog = open(Global_Setting_Var.TestListF, "r")  # open the test list
     TestLine = TestLog.readlines()
 
@@ -176,7 +177,7 @@ def main_r():
         # line
         number_of_line = len(Lines)  # the anoumnt of line in the test that is going to be execute
 
-        #full path of the test analysis in result directory
+        # full path of the test analysis in result directory
         fileNameLogResault = Global_Setting_Var.ParentDirResu + test_name + "/" + test_name + "_analasys.txt"
         fileNameImage = Global_Setting_Var.ParentDirResu + test_name + "/" + test_name  # prefix for the new images files
         filegeneralLogResault = Global_Setting_Var.GeneralResult  # full path for the general resault file
@@ -200,27 +201,26 @@ def main_r():
         # get the difference value from the ATP
         Global_Setting_Var.diffrence = Util.ReteurnDiffrencevalue(fileNameATP)
         testSummary = ATPLine[1]
-        Util.CreateDocHeader(Global_Setting_Var.versionFile, ATRfile, "ATR", test_name, testSummary)  # create the ATR txt file header
+        Util.CreateDocHeader(Global_Setting_Var.versionFile, ATRfile, "ATR", test_name,
+                             testSummary)  # create the ATR txt file header
 
         TestResualt = open(fileNameLogResault, "w+")  # open the test analysand file
         OverAllResault = open(filegeneralLogResault, "a")  # open the general result file
         currentRunningresault = open(currentRunningresultfile, "a")  # open the general result file
 
-
         # presnt the status window with the test name
-        text_not = "Automatic run of :  " + test_name + ". Its test number " + str(x) + " out of : " + str(len(TestLine) - 2)
+        text_not = "Automatic run of :  " + test_name + ". Its test number " + str(x) + " out of : " + str(
+            len(TestLine) - 2)
         NotifThread = threading.Thread(target=Util.Open_Notefic, args=(text_not,), daemon=True)
 
-
-
-        if test_name.find("IOS_WEB") != -1: # if the test is with IOS open IOS
+        if test_name.find("IOS_WEB") != -1:  # if the test is with IOS open IOS
             Util.go_2desktop()  # Goto desktop as the beginning of the test
             NotifThread.start()
             ChromeIssue.KillIOS()
             time.sleep(2)
             ChromeIssue.OpenSite(Global_Setting_Var.site2open)
             time.sleep(2)
-        elif test_name.find("Desktop") != -1: # Goto desktop as the beginning of the test
+        elif test_name.find("Desktop") != -1:  # Goto desktop as the beginning of the test
             Util.go_2desktop()
             NotifThread.start()
         else:
@@ -228,16 +228,11 @@ def main_r():
 
 
 
-        #starttime = time.time()  # start the timer
-        Global_Setting_Var.start_time = time.time()  # start timer
-
         # start the thread listener keyboard and mouse
         K_listener = KeyboardListener(on_press=keyboard_press)
-        #M_listener = MouseListener(on_click=mouse_click, on_scroll=mouse_scroll)
+        # M_listener = MouseListener(on_click=mouse_click, on_scroll=mouse_scroll)
         K_listener.start()
-        #M_listener.start()
-
-
+        # M_listener.start()
 
         index = 0
         scroll_setp = 0
@@ -248,8 +243,11 @@ def main_r():
         numberofpass = 0
         generalresault = 0
         currentRunningresault.writelines(Util.Timefordispaly() + " running Test :" + test_name + "\n")
+        # totaltime = round((time.time() - Global_Setting_Var.start_time), 2)
+        # runTime = round((time.time() - Global_Setting_Var.Lasttime), 2)
         while index < number_of_line - 1:
-
+            # starttime = time.time()  # start the timer
+            Global_Setting_Var.start_time = time.time()  # start timer
             # zeroized  the data
             controller = ""
             controller2 = ""
@@ -258,12 +256,13 @@ def main_r():
             buttonMouse = ""
             commandMouse = ""
             keyPressed = ""
-            #totaltime = round((time.time() - starttime), 2)  # update the current time
+            # totaltime = round((time.time() - starttime), 2)  # update the current time
 
             # lineContainList = Global_Setting_Var.Lines[index].split(' ') - to be discuss with marco
             lineContainList = Lines[index].split(' ')
-            #print(index)
-            controller = lineContainList[1]  # find the command type  in the current test step  : "close" or "scrolled" or
+            NextlineContainList = Lines[index + 1].split(' ')# print(index)
+            controller = lineContainList[
+                1]  # find the command type  in the current test step  : "close" or "scrolled" or
             # "mouse" or "keyboard"
 
             # if we reach "close" = the end of the test procedure so  break out
@@ -274,36 +273,43 @@ def main_r():
             # in case of pres esc while sutomatic running the system kill the python
             if Global_Setting_Var.terminate == 1:
                 ATRLogfilePointer.writelines("close the file")
-                #M_listener.stop()
+                # M_listener.stop()
                 K_listener.stop()
                 ATRLogfilePointer.close()
                 Util.go_2desktop()
                 text_not = "the automatic run  was terminated"
                 Open_Notefic(text_not)
-                #os.system("taskkill /f /t /IM python.exe")
+                # os.system("taskkill /f /t /IM python.exe")
 
-            # the system wait until the running time is equal or greater from the test step time
+                #  step time is the float number at the beginning of action in the log file, in case its not an action Steptime = o
             if (any(map(str.isdigit, lineContainList[0]))):
                 StepTime = float(lineContainList[0])
-            Global_Setting_Var.Lasttime = time.time()
-            runTime = 0
-            while runTime < StepTime:
-                #totaltime = round((time.time() - starttime), 2)
-                #runTime = round((time.time() - Global_Setting_Var.Lasttime), 2)
-                runTime =(time.time() - Global_Setting_Var.Lasttime)
-            Global_Setting_Var.Lasttime = time.time()
+            else:
+                StepTime = 0
+
+            if (False):
+                Global_Setting_Var.Lasttime = time.time()
+                runTime = 0
+
+                # the system wait until the running time is equal or greater from the step time
+                while runTime < StepTime:
+                    runTime = (time.time() - Global_Setting_Var.Lasttime)
+                Global_Setting_Var.Lasttime = time.time()
+
             # if the current step is scrolled move the mouse to the written location and make the number of scroll desire
             # (sum of all scroll command)
-            if controller == 'scrolled':
-                if Lines[index + 1].split(' ')[
-                    1] != 'scrolled':  # make the scroll command if the next step isnot scroll command
-                    xValueMouse = int(lineContainList[3].split(',')[0][1:])  # read mouse X value
-                    yValueMouse = int(lineContainList[3].split(',')[1][:-1])  # read mouse Y value
-                    pyautogui.moveTo(xValueMouse, yValueMouse, 0.1)  # move the mouse
+            if "scrolled" in Lines[index]:
+                MP = lineContainList.index("at") + 1  # MP = mouse  position in the string com after the "at"
+                SD = lineContainList.index("at") + 2  # SD = scroll direction in the string com after the "at"
+                if "scrolled" not in Lines[index+1]:  # make the scroll command if the next step is not scroll command
+                    xValueMouse = int(lineContainList[MP].split(',')[0][1:])  # read mouse X value
+                    yValueMouse = int(lineContainList[MP].split(',')[1][:-1])  # read mouse Y value
+                    pyautogui.moveTo(xValueMouse, yValueMouse, StepTime * 0.75)  # 0.1)  # move the mouse
                     scroll_setp = scroll_setp * Global_Setting_Var.mouse_scroll  # alignment value for scroll command
                     pyautogui.scroll(scroll_setp)  # make scroll command
 
                     index = index + 1
+                    runTime = round((time.time() - Global_Setting_Var.start_time), 4)
                     ATRLogfilePointer.writelines(
                         str(runTime) + ' mouse scrolled at ({0},{1}) {2} times  \n'.format(yValueMouse, xValueMouse,
                                                                                            num_scroll_setp))
@@ -311,7 +317,7 @@ def main_r():
                     num_scroll_setp = 0
                 else:
                     index = index + 1
-                    if lineContainList[4][-3:-1] == '-1':
+                    if lineContainList[SD][-3:-1] == '-1':
                         scroll_setp = scroll_setp - 1
                         num_scroll_setp = num_scroll_setp + 1
 
@@ -320,19 +326,23 @@ def main_r():
                         num_scroll_setp = num_scroll_setp + 1
 
             # if the current step is mouse move the mouse to the written location and make click on  or drag command
-            elif controller == 'mouse' and lineContainList[2] == "down":
+            #elif controller == 'mouse' and lineContainList[2] == "down":
+            elif "mouse" in Lines[index] and "down" in Lines[index]:
+                MP = lineContainList.index("at") + 1
                 mouseOperationCounter = mouseOperationCounter + 1
-                xValueMouse = int(lineContainList[4].split(',')[0][1:])  # read mouse X value
-                yValueMouse = int(lineContainList[4].split(',')[1][0:-1])  # read mouse Y value
+                xValueMouse = int(lineContainList[MP].split(',')[0][1:])  # read mouse X value
+                yValueMouse = int(lineContainList[MP].split(',')[1][0:-1])  # read mouse Y value
                 buttonMouse = lineContainList[-2].split('.')[1]
 
-                xnewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[0][1:])
-                ynewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[1][:-1])
+                NextlineContainList
+                xnewValueMouse = int(NextlineContainList[MP].split(',')[0][1:])
+                ynewValueMouse = int(NextlineContainList[MP].split(',')[1][:-1])
                 diff_movmemnt = abs(xValueMouse - xnewValueMouse) + abs(yValueMouse - ynewValueMouse)
                 if diff_movmemnt < 10:  # if the current location of the mouse and the next location of the mouse
                     # equal to button press up its "Click"
-                    pyautogui.moveTo(xValueMouse, yValueMouse, 0.1)  # move the mouse
+                    pyautogui.moveTo(xValueMouse, yValueMouse, StepTime * 0.75)  # 0.1)  # move the mouse
                     pyautogui.click(button=buttonMouse)  # do the click (left or right)
+                    runTime = round((time.time() - Global_Setting_Var.start_time), 4)
                     ATRLogfilePointer.writelines(
                         str(runTime) + ' mouse click at ({0},{1}) with Button. {2} \n'.format(yValueMouse, xValueMouse,
                                                                                               buttonMouse))
@@ -341,12 +351,18 @@ def main_r():
                     index = index + 2
 
                 else:  # its drug and drop command
-                    pyautogui.moveTo(xValueMouse, yValueMouse, 0.1)  # move the mouse
-                    Dragtime = float(Lines[index + 1].split(' ')[0]) - float(Lines[index].split(' ')[0])
-                    xnewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[0][1:])
-                    ynewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[1][:-1])
-                    pyautogui.dragTo(xnewValueMouse, ynewValueMouse, 1.0,
+                    pyautogui.moveTo(xValueMouse, yValueMouse, StepTime * 0.75)  # move the mouse
+
+                    if (any(map(str.isdigit, NextlineContainList[0]))):
+                        Dragtime = float(NextlineContainList[0])
+                    else:
+                        Dragtime = 0.1
+                    #Dragtime = float(Lines[index + 1].split(' ')[0]) - float(Lines[index].split(' ')[0])
+                    #xnewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[0][1:])
+                    #ynewValueMouse = int(Lines[index + 1].split(' ')[4].split(',')[1][:-1])
+                    pyautogui.dragTo(xnewValueMouse, ynewValueMouse, Dragtime * 0.75,
                                      button=buttonMouse)  # do the drag and drop
+                    runTime = round((time.time() - Global_Setting_Var.start_time), 4)
                     ATRLogfilePointer.writelines(
                         str(runTime) + ' mouse drag to  ({0},{1}) with Button {2} \n'.format(xnewValueMouse,
                                                                                              ynewValueMouse,
@@ -354,41 +370,43 @@ def main_r():
                     index = index + 2
 
             # if the current step is keyboard command define if it "special key" or "letter key" or "ctrl left"
-            elif controller == 'keyboard':
+            elif "keyboard" in Lines[index]:# controller == 'keyboard':
                 index = index + 1
-                listA = ['accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace',
-                         'browserback', 'browserfavorites', 'browserforward', 'browserhome',
-                         'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear',
-                         'convert', 'ctrl', 'ctrlright', 'decimal', 'del', 'delete',
-                         'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
-                         'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
-                         'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
-                         'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
-                         'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
-                         'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
-                         'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
-                         'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn',
-                         'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
-                         'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
-                         'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab',
-                         'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
-                         'command', 'option', 'optionleft', 'optionright']
+                # listA = ['accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace',
+                #          'browserback', 'browserfavorites', 'browserforward', 'browserhome',
+                #          'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear',
+                #          'convert', 'ctrl', 'ctrlright', 'decimal', 'del', 'delete',
+                #          'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
+                #          'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
+                #          'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
+                #          'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
+                #          'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
+                #          'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
+                #          'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
+                #          'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn',
+                #          'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
+                #          'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
+                #          'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab',
+                #          'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
+                #          'command', 'option', 'optionleft', 'optionright']
 
                 keyPressed = lineContainList[-2].split('.')[-1][:]
 
                 if keyPressed == "f6" or keyPressed == "ctrl_l":  # if f5 or f6 or f7
                     Util.take_snapshot(fileNameImage, Global_Setting_Var.TopLeft_X, Global_Setting_Var.TopLeft_Y,
-                                  Global_Setting_Var.ButtomRight_X, Global_Setting_Var.ButtomRight_Y, fileNameImage_number)
+                                       Global_Setting_Var.ButtomRight_X, Global_Setting_Var.ButtomRight_Y,
+                                       fileNameImage_number)
 
                     FileNameNew = fileNameImage + "_step_" + str(fileNameImage_number) + "P.jpg"
-                    FileNameSource = Global_Setting_Var.ParentDirTest + test_name + "/" + test_name + "_step_" + str(fileNameImage_number) + "P.jpg"
-                    #print(FileNameNew + " " + FileNameSource)
+                    FileNameSource = Global_Setting_Var.ParentDirTest + test_name + "/" + test_name + "_step_" + str(
+                        fileNameImage_number) + "P.jpg"
+                    # print(FileNameNew + " " + FileNameSource)
                     ATRLogfilePointer.writelines(str(runTime) + ' Ctrl_l was push image was taken \n')
 
                     difference = 0
                     critic = 0
                     stepname = Lines[index]
-                    if Lines[index].split(' ')[0] == "show":
+                    if "show" in Lines[index]: #Lines[index].split(' ')[0] == "show":
                         critic = 1
                         Type = "showstoper"
                     else:
@@ -396,37 +414,49 @@ def main_r():
 
                     path = Global_Setting_Var.ParentDirTest + test_name + "/"
 
-                    difference = ImageProcess.calcdiffrance(FileNameNew, FileNameSource, path, Global_Setting_Var.image_treshold,str(fileNameImage_number))
+                    difference = ImageProcess.calcdiffrance(FileNameNew, FileNameSource, path,
+                                                            Global_Setting_Var.image_treshold,
+                                                            str(fileNameImage_number))
                     diff_scale = difference / Global_Setting_Var.diffrence
-                    #print (difference , Global_Setting_Var.diffrence)
+                    # print (difference , Global_Setting_Var.diffrence)
 
                     resualtImagename = FileNameNew.split("/")[-1]
                     # search if this current step is critical in the ATP file
                     if diff_scale > 1 and critic == 1:
                         status = 'fail critic step'
-                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,Global_Setting_Var.diffrence)
+                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,
+                                    Global_Setting_Var.diffrence)
 
-                        Update_ATR(ATRfile, ATPfile, status, difference, FileNameSource,ATPLine)  # update test ATR file
-                        #Create_Def_Image(FileNameSource, FileNameNew, str(fileNameImage_number))  # create merge image between the old and the new
-                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(fileNameImage_number) + " #Type: #" + Type + " #" + stepname[:-1] + " #Fail -> #" + resualtImagename + " #"+ Util.Timefordispaly() +"#\n")
+                        Update_ATR(ATRfile, ATPfile, status, difference, FileNameSource,
+                                   ATPLine)  # update test ATR file
+                        # Create_Def_Image(FileNameSource, FileNameNew, str(fileNameImage_number))  # create merge image between the old and the new
+                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(
+                            fileNameImage_number) + " #Type: #" + Type + " #" + stepname[
+                                                                                :-1] + " #Fail -> #" + resualtImagename + " #" + Util.Timefordispaly() + "#\n")
                         index = number_of_line
                         generalresault = generalresault + 1
                     elif diff_scale <= 1:  # in case the difference value smaller then predefine in setting file
                         status = 'Pass'
-                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,Global_Setting_Var.diffrence)
+                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,
+                                    Global_Setting_Var.diffrence)
                         Update_ATR(ATRfile, ATPfile, status, difference, FileNameSource,
                                    ATPLine)  # update test ATR file
-                        #Create_Def_Image(FileNameSource, FileNameNew,str(fileNameImage_number))  # create merge image between the old and the new
-                        #currentRunningresault.writelines("\t step number: #" + str(fileNameImage_number) + " #" +stepname[:-1] + " #pass -> #" + resualtImagename +"\n") #Lines[index].split("\t")[1])
-                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(fileNameImage_number) + " #Type: #" + Type + " #" + stepname[:-1] + " #Pass -> #" + resualtImagename + " #"+ Util.Timefordispaly() +"#\n")
+                        # Create_Def_Image(FileNameSource, FileNameNew,str(fileNameImage_number))  # create merge image between the old and the new
+                        # currentRunningresault.writelines("\t step number: #" + str(fileNameImage_number) + " #" +stepname[:-1] + " #pass -> #" + resualtImagename +"\n") #Lines[index].split("\t")[1])
+                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(
+                            fileNameImage_number) + " #Type: #" + Type + " #" + stepname[
+                                                                                :-1] + " #Pass -> #" + resualtImagename + " #" + Util.Timefordispaly() + "#\n")
                         generalresault = generalresault + 1
                     else:  # in case the difference value bigger then the  predefine in setting file
                         status = 'Fail'
-                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,Global_Setting_Var.diffrence)
+                        update_data(TestResualt, OverAllResault, test_name, fileNameImage_number, status, diff_scale,
+                                    Global_Setting_Var.diffrence)
                         Update_ATR(ATRfile, ATPfile, status, difference, FileNameSource,
                                    ATPLine)  # update test ATR file
-                        #Create_Def_Image(FileNameSource, FileNameNew,str(fileNameImage_number))  # create merge image between the old and the new
-                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(fileNameImage_number) + " #Type: #" + Type + " #" + stepname[:-1] + " #Fail -> #" + resualtImagename + " #"+ Util.Timefordispaly() +"#\n")
+                        # Create_Def_Image(FileNameSource, FileNameNew,str(fileNameImage_number))  # create merge image between the old and the new
+                        currentRunningresault.writelines("#" + test_name + " #step number: #" + str(
+                            fileNameImage_number) + " #Type: #" + Type + " #" + stepname[
+                                                                                :-1] + " #Fail -> #" + resualtImagename + " #" + Util.Timefordispaly() + "#\n")
 
                         generalresault = generalresault + 1
 
@@ -436,21 +466,21 @@ def main_r():
                 # remote desktop to CGF1
                 elif keyPressed == "f7":
                     Util.open_remote_desktop(Global_Setting_Var.F7_IP, Global_Setting_Var.Remote_window_location,
-                                        Global_Setting_Var.Remote_window_size)
+                                             Global_Setting_Var.Remote_window_size)
                 # remote desktop to TC
                 elif keyPressed == "f8":
                     Util.open_remote_desktop(Global_Setting_Var.F8_IP, Global_Setting_Var.Remote_window_location,
-                                        Global_Setting_Var.Remote_window_size)
+                                             Global_Setting_Var.Remote_window_size)
                 # remote desktop to Own1
                 elif keyPressed == "f9":
                     Util.open_remote_desktop(Global_Setting_Var.F9_IP, Global_Setting_Var.Remote_window_location,
-                                        Global_Setting_Var.Remote_window_size)
+                                             Global_Setting_Var.Remote_window_size)
 
                 # simulate alt-tab functione
-                elif keyPressed == "f2" or keyPressed== "ctrl_r":
+                elif keyPressed == "f2" or keyPressed == "ctrl_r":
                     alt_Tab()
 
-                elif keyPressed in listA:  # if "speciel key" press down and up
+                elif keyPressed in Global_Setting_Var.listA:  # if "speciel key" press down and up
                     pyautogui.keyDown(keyPressed)
                     pyautogui.keyUp(keyPressed)
 
@@ -458,14 +488,14 @@ def main_r():
                     keyPressed = lineContainList[-2][:-1].split('\r')[0]
                     txt = keyPressed[1]
                     pyautogui.typewrite(txt)
-
+                    runTime = round((time.time() - Global_Setting_Var.start_time), 4)
+                    ATRLogfilePointer.writelines(str(runTime) + ' keyboard pressed with. {0} \n'.format(txt))
             else:
                 index = index + 1
 
-
         ATRLogfilePointer.writelines("close the file")
-        #M_listener.stop()
-        #K_listener.stop()
+        # M_listener.stop()
+        # K_listener.stop()
         ATRLogfilePointer.close()
         Util.close_Notefic()  # close the status window = running auto test
 
@@ -492,21 +522,19 @@ def main_r():
         Util.DBG(fileNameLog, ATRLogfile, fileNameATR)
 
         # close_Notefic()  # close status window
-        #close_analasys_update()
-
+        # close_analasys_update()
 
     OverAllResault.close()  # close general result file
-    currentRunningresault.close() # close the current test result file
+    currentRunningresault.close()  # close the current test result file
 
-    #Notepadath = r'C:\Windows\System32\notepad.exe'
-    #p = subprocess.Popen([Notepadath, currentRunningresultfile])
+    # Notepadath = r'C:\Windows\System32\notepad.exe'
+    # p = subprocess.Popen([Notepadath, currentRunningresultfile])
     K_listener.stop()  # stop header
 
-    Util.runMainAutoScript()
+    if Global_Setting_Var.Web_GUI == False:
+        Util.runMainAutoScript()
 
-    #endmsg()
-
-
+    # endmsg()
 
 
 if __name__ == "__main__":

@@ -16,11 +16,8 @@ def KillIOS():
 
 def OpenSite(site):
 
-
     global driver
 
-
-    # options = webdriver.ChromeOptions()
     options = Options()
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -29,7 +26,6 @@ def OpenSite(site):
     options.binary_location = Global_Setting_Var.chromepath
 
     pathChromDriver = Global_Setting_Var.chromedriver
-    #site = Global_Setting_Var.site2open
     driver = webdriver.Chrome(executable_path=pathChromDriver, chrome_options=options)
     driver.maximize_window()
     driver.get(site)
